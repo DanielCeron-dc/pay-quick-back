@@ -1,0 +1,70 @@
+// Prisma schema for the payments test backend.
+// This schema defines the core entities used by the backend to
+// orchestrate local transactions and track product stock.  Prices
+// are stored in cents to avoid floating‐point rounding issues.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+
+  provider = "sqlite"
+  // Use a hard-coded SQLite connection string so that a DATABASE_URL
+  // environment variable is not required.  When running migrations
+  // Prisma will automatically create the dev.db file in the project
+  // root if it does not exist.
+  url      = "file:./dev.db"
+}
+
+// Note: SQLite does not support native enums.  Instead of defining
+// TransactionStatus as an enum, the status field on the Transaction
+// model is a plain string that stores values like 'PENDING',
+// 'APPROVED' or 'DECLINED'.  If you later migrate to PostgreSQL or
+// MySQL you can convert this to a true enum.
+
+/// Product represents an item that can be purchased.  Each product
+/// stores its price in cents and keeps track of the remaining stock.
+model Product {
+  id        Int              @id @default(autoincrement())
+  name      String
+  priceInCents Int
+  stock     Int
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  items     TransactionItem[]
+}
+
+/// Transaction represents a single purchase attempt by a customer.
+/// The amountInCents and currency are computed by the backend based
+/// on the associated items.  customerEmail stores the purchaser's
+/// email address.  The status will initially be PENDING and is
+/// updated once the Wompi payment API responds.
+model Transaction {
+  id            Int                @id @default(autoincrement())
+  ///
+  /// The current state of the transaction.  Possible values are
+  /// 'PENDING', 'APPROVED' or 'DECLINED'.  Stored as a plain
+  /// string because SQLite does not support native enums.
+  status        String
+  amountInCents Int
+  currency      String
+  customerEmail String
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  items         TransactionItem[]
+}
+
+/// TransactionItem links a Transaction to a Product with a given
+/// quantity.  This separate table allows a transaction to contain
+/// multiple products with different quantities.
+model TransactionItem {
+  id            Int         @id @default(autoincrement())
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  transactionId Int
+  product       Product     @relation(fields: [productId], references: [id])
+  productId     Int
+  quantity      Int
+}
