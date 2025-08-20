@@ -1,0 +1,77 @@
+# payQuickBackend Setup
+
+## Prerequisites
+
+Before running the project, make sure you have the following installed:
+- **Node.js** (v14 or higher)
+- **npm** (Node Package Manager)
+- **Prisma** (you can install it globally using \`npm install -g prisma\`)
+
+## Project Setup
+
+Follow these steps to set up the project:
+
+1. **Clone the Repository**
+
+   First, clone the repository to your local machine:
+
+   \`\`\`bash
+   git clone <repository-url>
+   cd payQuickBackend
+   \`\`\`
+
+2. **Install Dependencies**
+
+   Install the required dependencies by running:
+
+   \`\`\`bash
+   npm install
+   \`\`\`
+
+3. **Generate Prisma Client**
+
+   Run the following command to generate the Prisma client:
+
+   \`\`\`bash
+   npx prisma generate
+   \`\`\`
+
+4. **Create SQLite Database and Initial Migration**
+
+   Initialize the database and apply the initial migration by running:
+
+   \`\`\`bash
+   npx prisma migrate dev --name init
+   \`\`\`
+
+5. **Running the Backend**
+
+   Start the backend server:
+
+   \`\`\`bash
+   npm run start
+   \`\`\`
+
+   The backend will be running at \`http://localhost:3000\`. You can also access it remotely on [https://updated-backend-sqlite-no-env.fly.dev](https://updated-backend-sqlite-no-env.fly.dev).
+
+6. **Running Unit Tests**
+
+   Please note that the unit tests are **not finished**. You can run the existing tests using:
+
+   \`\`\`bash
+   npm run test
+   \`\`\`
+
+## Frontend Integration
+
+The frontend is already integrated with the backend running at [https://updated-backend-sqlite-no-env.fly.dev](https://updated-backend-sqlite-no-env.fly.dev). Make sure the frontend is configured to send requests to this backend.
+
+## Notes
+
+- The backend uses SQLite as its database.
+- Ensure that Prisma is properly set up and the migrations are applied to reflect the database schema.
+- You may need to adjust environment variables and configurations based on your local or deployment environment.
+
+## License
+
+This project is licensed under the MIT License.
